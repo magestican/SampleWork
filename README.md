@@ -25,7 +25,7 @@ Sample Code of an angularJS implementation
 
         <text:box label titletext="Licenses Type" text="C-20"></text:box>
 
-        <text:box validme validmefor="text" validmeaction="global.save" titletext="Licenses Number" required modelbind="model.licenseNumber1"></text:box>
+        <text:box validme validmefor="number" validmeaction="global.save" titletext="Licenses Number" required modelbind="model.licenseNumber1"></text:box>
 
         <text:box validme validmefor="text" validmeaction="global.save" titletext="Expiration Date" width="60%" modelbind="model.expirationDate1"></text:box>
 
