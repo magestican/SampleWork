@@ -5,7 +5,7 @@ This repository contains samples of my code
 
 
 
-Sample Code of an angularJS implementation
+Sample Code of an angularJS implementation by me Bryan Arbelo
 
 --A TAB from a Multiple step Page--
 ==========
