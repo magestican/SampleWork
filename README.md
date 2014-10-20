@@ -165,23 +165,56 @@ Sample Code of an angularJS implementation
 --Directives Used--
 ==========
 
-	angular.module('Directives')
-        .directive('textBox', ['$filter', '$rootScope', 'fileUploader', '$compile', 'Helper', function ($filter, $rootScope, 		fileUploader, $compile, Helper) {
+		angular.module('Directives')
+        .directive('textBox', ['$filter', '$rootScope', 'fileUploader', '$compile', 'Helper', function ($filter, $rootScope, fileUploader, $compile, Helper) {
             return {
                 restrict: 'E',
                 scope: true,
+                controller: function ($scope, $element, $attrs) {
+
+                    $scope.addValidMeMarkup = function () {
+                        return ($attrs.validmeaction != undefined ? "validmeaction='" + $attrs.validmeaction + "'" : "") +
+                               ($attrs.validme != undefined ? "validme='" + $attrs.validme + "'" : "") +
+                               ($attrs.validmefor != undefined ? "validmefor='" + $attrs.validmefor + "'" : "")
+                    }
+                    $scope.addLinkMarkup = function (link) {
+                        if (link.indexOf("$link") != -1) {
+
+                            var aElement = "<a src=\"" + $attrs.link + "\"  >" + $attrs.linktext + "</a>";
+                            return link.replace("$link", aElement)
+                        }
+                        else
+                            return link;
+                    }
+                    $scope.addWidthMarkup = function () {
+                        return ($attrs.width != undefined ? "style = \"width:" + $attrs.width + "  \"" : "")
+                    }
+                    $scope.addClassMarkup = function () {
+                        return ($attrs.class != undefined ? $attrs.class : "")
+                    }
+                    $scope.addHeightMarkup = function () {
+                        return ($attrs.height != undefined ? "style=\"height: " + $attrs.height + "\" " : "")
+                    }
+                    $scope.addWidthAndHeightMarkup = function () {
+                        return ($attrs.height != undefined ? "style=\"height: " + $attrs.height + ";" + ($attrs.width != undefined ? "width:" + $attrs.width + ";" : "") + "   \" " : "")
+                    }
+                },
                 link: function (scope, element, attrs, controllers) {
+
                     scope.model = $rootScope.global.currentControllerModel;
+
                     var render = function () {
+
                         //beginning tag
-                        var template = '<div  ' + (attrs.showcondition != undefined ? "ng-show = \"" + attrs.showcondition + "  \"" : "") + ' ' + (attrs.height != undefined ? "style=\"height: " + attrs.height + "\" " : "") + '  class="pdll form-horizontal">';
+                        var template = '<div  ' + (attrs.showcondition != undefined ? "ng-show = \"" + attrs.showcondition + "  \"" : "") + ' ' + scope.addHeightMarkup() + '  class="pdll form-horizontal">';
+
                         if (attrs.subtitle != undefined) {
-                            template += '<div class="row"><div class="col-sm-3 mrmb subtitle ' + (attrs.nobold != undefined ? "nobold" : "") + ' "  ' + (attrs.width != undefined ? "style = \"width:" + attrs.width + "  \"" : "") + '>' + attrs.titletext + '</div><a class="col-sm-5 edit-lnk " ng-hide="editMode" ng-click="editMode=true">Edit</a></div>'
+                            template += '<div class="row"><div class="col-sm-3 mrmb subtitle ' + (attrs.nobold != undefined ? "nobold" : "") + ' "  ' + scope.addWidthMarkup() + '>' + attrs.titletext + '</div><a class="col-sm-5 edit-lnk " ng-hide="editMode" ng-click="editMode=true">Edit</a></div>'
                         } else if (attrs.leftlabel != undefined) {
                             if (attrs.titletext != undefined && attrs.titletext != "") {
                                 template += '<div class="form-group"> <div class="control-label col-sm-3"><div> <label >' + attrs.titletext + '</label></div>   <div> <label class=" italica control-label">' + (attrs.subtext != undefined ? attrs.subtext : "") + '</label>  </div> </div>';
                             }
-                            template = attrs.selectoptions != undefined ? scope.addSelectItems(template) : scope.addRadioButtons(template);
+                            template = attrs.selectoptions != undefined ? scope.addSelectItems(template) : (attrs.checkbox != undefined ? scope.addChecboxes(template) : scope.addRadioButtons(template));
                             if (attrs.titletext != undefined && attrs.titletext != "") {
                                 template += '</div>';
                             }
@@ -189,15 +222,13 @@ Sample Code of an angularJS implementation
                             template += '<div class="form-group"> <label class="col-sm-3 control-label">' + attrs.titletext + '</label><div class="col-sm-5">';
                             if (attrs.label == undefined) {
                                 template += '<input  ' +
-                                    (attrs.width != undefined ? "style = \"width:" + attrs.width + "  \"" : "") +
-                                    (attrs.validme != undefined ? "validme='" + attrs.validme + "'" : "") +
-                                    (attrs.validmeaction != undefined ? "validmeaction='" + attrs.validmeaction + "'" : "") +
-                                    (attrs.validmefor != undefined ? "validmefor='" + attrs.validmefor + "'" : "") +
+                                    scope.addWidthMarkup() +
+                                    scope.addValidMeMarkup() +
                                     'type="' + attrs.type + '" value="' + attrs.text + '" class="form-control"   ng-model="' + attrs.modelbind + '" ' +
                                     (attrs.isrequired != undefined ? "required" : "") + ' ></div></div>';
-                            } else {
+                            } else
                                 template += '<label  style="text-align:left"  class="control-label bold " >' + attrs.text + '</label></div></div>';
-                            }
+
                         }
                         //end tag
                         template += '</div>';
@@ -213,22 +244,19 @@ Sample Code of an angularJS implementation
 
                         if (attrs.options != undefined) {
                             var uploadoptions = [];
-                            
+
                             if (attrs.uploadoptions)
                                 uploadoptions = attrs.uploadoptions.split('@');
                             angular.forEach(attrs.options.split('@'), function (option, index) {
 
-                                template += '<label class="col-sm-5 ' + (attrs.class != undefined ? attrs.class : "") + '\" ' + (attrs.width != undefined ? "style = \"width:" + attrs.width + "  \"" : "") + '   ><input type="radio" ' +
-                                    (attrs.validme != undefined ? "validme='" + attrs.validme + "'" : "") +
-                                    (attrs.validmeaction != undefined ? "validmeaction='" + attrs.validmeaction + "'" : "") +
-                                    (attrs.validmefor != undefined ? "validmefor='" + attrs.validmefor + "'" : "") +
-                                    'name="inlineRadioOptions' + attrs.modelbind.split(".")[1] + '"  value="' + option + '" ng-model="' + attrs.modelbind + '"  ' + (index == 0 ? "checked"  : "") + '> ' +
+                                template += '<label class="col-sm-5 ' +
+                                     scope.addClassMarkup() + '\" ' +
+                                     scope.addWidthMarkup() + '><input type="radio" ' +
+                                     scope.addValidMeMarkup() +
+                                    'name="inlineRadioOptions' + attrs.modelbind.split(".")[1] + '"  value="' + option + '" ng-model="' + attrs.modelbind + '"  ' + (index == 0 ? "checked" : "") + '> ' +
                                     (attrs.optiontitles != undefined ? '<span class="bold"> ' + attrs.optiontitles.split('@')[index].trim() + ': </span>' : "") +
-                                    option + ' </label>' +
-                                    (attrs.uploadoptions && uploadoptions[index] ? "<upload:button titletext=\"\" width=\"80%\" class=\"mrlt\"  modelbind=\"" + uploadoptions[index] + "\"></upload:button>" : "")
-
-                                ;
-
+                                     scope.addLinkMarkup(option) + ' </label>' +
+                                    (attrs.uploadoptions && uploadoptions[index] ? "<upload:button titletext=\"\" " + (attrs.hint != undefined ? "hint=\"" + attrs.hint + "\"" : "") + " width=\"80%\" class=\"mrlt\"  modelbind=\"" + uploadoptions[index] + "\"></upload:button>" : "");
                             })
                         }
                         return template;
@@ -244,16 +272,27 @@ Sample Code of an angularJS implementation
                             //set default value as first value
                             scope.model[attrs.modelbind.split('.')[1]] = scope.selectoptions[0];
                             template += '<select ng-model="' + attrs.modelbind + '" ' +
-                                (attrs.validmeaction != undefined ? "validmeaction='" + attrs.validmeaction + "'" : "") +
-                                (attrs.validme != undefined ? "validme='" + attrs.validme + "'" : "") +
-                                (attrs.validmeaction != undefined ? "validmeaction='" + attrs.validmeaction + "'" : "") +
-                                (attrs.validmefor != undefined ? "validmefor='" + attrs.validmefor + "'" : "") +
+                                scope.addValidMeMarkup() +
                                 'ng-options="option for option in  selectoptions" style="padding: 5px;margin-left: 15px;" class="mrst txt-size-m spanlike table-offset">'
                         }
                         else {
                             console.log("Select options not specified for a select type textbox");
                         }
                         return template;
+                    }
+                    //sugestion : it possible to extend this method so that we can add multiple check boxes like in the addSelectOptions method
+                    scope.addChecboxes = function (template) {
+                        var uploadoptions = [];
+
+                        if (attrs.uploadoptions)
+                            uploadoptions = attrs.uploadoptions.split('@');
+                        debugger
+                        return '<div class="radio col-sm-6  service-block ' +
+                            scope.addClassMarkup() + '\"   ' +
+                            scope.addWidthAndHeightMarkup() +
+                            '  ><label class="checkbox ng-scope"><input type="checkbox"  ' +
+                            'ng-model="' + attrs.modelbind + '" value="true" class="ng-pristine ng-valid">' +
+                            scope.addLinkMarkup(attrs.text) + '</label> </div>'
                     }
 
 
@@ -279,23 +318,30 @@ Sample Code of an angularJS implementation
                     } else {
                         console.log("The specified textbox doesnt have the modelbind attribute");
                     }
+
                 }
             };
         }]);
+
+
 
 
 --And--
 ==========
 
 
-	angular.module('Directives')
-        .directive('uploadButton', ['$filter', '$rootScope', '$upload', 'fileUploader', '$compile', 'Helper', function 			($filter, $rootScope, $upload, fileUploader, $compile, Helper) {
+		angular.module('Directives')
+	 .directive('uploadButton', ['$filter', '$rootScope', '$upload', 'fileUploader', '$compile', 'Helper', function ($filter, $rootScope, $upload, fileUploader, $compile, Helper) {
             return {
                 restrict: 'E',
                 scope: true,
                 link: function (scope, element, attrs, controllers) {
+
                     scope.model = $rootScope.global.currentControllerModel;
+
+
                     scope.setFileEventListener = function ($files) {
+
                         var reader = new FileReader();
                         scope.uploadedFile = $files[0];
                         reader.readAsDataURL(scope.uploadedFile);
@@ -362,11 +408,12 @@ Sample Code of an angularJS implementation
                         }
                     }
 
+
                     var render = function () {
                         scope.alignToRight = (attrs.titletext == undefined || attrs.titletext == "")
                         scope.alignToBottom = !scope.alignToRight;
 
-                        var template = '<div class="form-group form-horizontal "><label class="col-sm-3 control-label"  ' + (attrs.titletext == undefined || attrs.titletext == "" ? "style = \"width:0px\"" : "") + ' >' + attrs.titletext + '</label><div class="col-sm-5 mrml  ' + (attrs.class != undefined ? attrs.class : "") + '" ' + (attrs.width ? "style = \"width:" + attrs.width + "  \"" : "") + '><div><div   ng-file-select="setFileEventListener($files)"  class="upload-button hand spanlike" ><p><span class="pdml bold ha">' + attrs.text + '</span></p></div><input style="visibility:hidden;  width:0px"  id="hiddenUploadButton" type="file" class="spanlike form-control "><input disabled style="width:178px" type="text"   placeholder="No file selected" ng-model="model.' + attrs.modelbind.split('.')[1] + '.name" class=" spanlike mrll form-control "><div  style=\"' + (attrs.hintwidth != undefined ? "width:" + attrs.hintwidth + ";" : "") + '\"  ng-class="{\'right-label-upload-button  txt-size-m\' : alignToRight , \'italica txt-size-m\' : alignToBottom } ">  ' + (attrs.hint ? "<span style=\"color:gray;   \" class=\"bold\">" + (attrs.hinttitle ? attrs.hinttitle : "Hint") + ":</span>" : "") + (attrs.hint ? attrs.hint : "") + ' ' + attrs.typeoffile + ',' + attrs.filesize + '</div></div>    </div></div>';
+                        var template = '<div class="form-group form-horizontal "><label class="col-sm-3 control-label"  ' + (attrs.titletext == undefined || attrs.titletext == "" ? "style = \"width:0px\"" : "") + ' >' + attrs.titletext + '</label><div class="col-sm-5 mrml  ' + (attrs.class != undefined ? attrs.class : "") + '" ' + (attrs.width ? "style = \"width:" + attrs.width + "  \"" : "") + '><div><div   ng-file-select="setFileEventListener($files)"  class="upload-button hand spanlike" ><p><span class="pdml bold ha">' + attrs.text + '</span></p></div><input style="visibility:hidden;  width:0px"  id="hiddenUploadButton" type="file" class="spanlike form-control "><input disabled style="width:178px" type="text"   placeholder="No file selected" ng-model="model.' + attrs.modelbind.split('.')[1] + '.name" class=" spanlike mrll form-control "><div  style=\"' + (attrs.hintwidth != undefined ? "width:" + attrs.hintwidth + ";" : "") + '\"  ng-class="{\'right-label-upload-button  txt-size-m\' : alignToRight , \'italica txt-size-m\' : alignToBottom ,  \' right-label-upload-button-black  italica txt-size-m\' : setTextBlack } ">  ' + (attrs.hint ? "<span  \" class=\"bold\">" + (attrs.hinttitle ? attrs.hinttitle : (attrs.nohinttext == undefined ? "Hint" : "")) + (attrs.nohinttext == undefined ? ":" : "") + "</span>" : "") + (attrs.hint ? attrs.hint : "") + ' ' + attrs.typeoffile + ',' + attrs.filesize + '</div></div>    </div></div>';
 
                         element.html(template);
                         var e = $compile(template, { transclude: true })(scope);
@@ -398,7 +445,7 @@ Sample Code of an angularJS implementation
 
 
 	angular.module('Directives')
-	 .directive('validme', ['$filter', '$compile', '$document', function ($filter, $compile, $document) {
+	  .directive('validme', ['$filter', '$compile', '$document', function ($filter, $compile, $document) {
         return {
             restrict: 'A',
             transclude: false,
@@ -425,15 +472,16 @@ Sample Code of an angularJS implementation
 
                 var index = scope.global.validMeQueue.length;
                 //add this validation item to the global queue
-                scope.global.validMeQueue.push(function validMeQueue(element) {
+                scope.global.validMeQueue.push(function (element) {
 
 
                     var result = { message: "", element: {}, good: true }
                     if (attrs.validmefor != undefined && attrs.validmefor != "") {
+
                         var value = element.val();
                         var ruleArray = attrs.validmefor.replace(" ", "").split("@");
                         var validRules = { type: "", rule: "" };
-                        if (validRules.length > 1) {
+                        if (ruleArray.length > 1) {
                             validRules.type = ruleArray[0];
                             validRules.rule = ruleArray[1];
                         } else {
@@ -456,7 +504,7 @@ Sample Code of an angularJS implementation
                                 var part1 = "^[";
                                 var part2 = "]+$";
                                 var regex = new RegExp(part1 + "0-9" + part2);
-                                if (regex.test(value)) {
+                                if (value != "" && regex.test(value) ) {
                                     result.message = "Value " + value + " is numeric";
                                     console.log(result.message);
                                     result.good = true;
@@ -469,11 +517,13 @@ Sample Code of an angularJS implementation
                             }
                         }
                         if (validRules.type == "number") {
+                            
                             if (validRules.rule != undefined && validRules.rule != "") {
+                                
                                 var part1 = "^[";
                                 var part2 = "]+$";
                                 var regex = new RegExp(part1 + validRules.rule + part2);
-                                if (regex.test(value)) {
+                                if (value != "" && regex.test(value)) {
                                     result.message = "Value " + value + " is a number";
                                     console.log(result.message);
                                     result.good = true;
@@ -536,7 +586,7 @@ Sample Code of an angularJS implementation
                     //do not create the same unbiding/validation-triggering function twice
                     if (scope['turnOf' + validMeAction.replace('.', '')] == undefined) {
 
-                        scope['turnOf' + validMeAction.replace('.', '')] = scope.$on(validMeAction, function (event) {
+                        scope['turnOf' + validMeAction.replace('.', '')] = scope.$on(validMeAction + "Checkups", function (event) {
 
                             var lastErroredElement = {};
                             //execute queue
@@ -551,22 +601,16 @@ Sample Code of an angularJS implementation
                         angular.forEach(validMeAction.split('.'), function (member) {
                             members += '["' + member + '"]';
                         })
+                        debugger
                         //wrap function to inject emit at the previous to function execution
                         var watchingFunction = eval(members);
                         function functionWrapper() {
                             that = functionWrapper;
-                            //execute validation before anything else
-                            scope.$emit(validMeAction);
                             try {
-                                return that.watchingFunction.apply(this, arguments);
+                                //execute validation before anything else, then execute method over which we are looking
+                                scope.$emit(validMeAction + "Checkups").then(that.watchingFunction.apply(this, arguments));
                             } catch (e) {
                                 console.log("An error ocurred in " + that.watchingFunction.toString() + "\n \n . The particularity of the error is : \n" + e.message)
-                                if (handle) {
-                                    return handle(e);
-                                }
-                                else {
-                                    console.log("error handling exception");
-                                }
                             }
                         };
                         //set the watching function for nesting purposes
@@ -596,7 +640,6 @@ Sample Code of an angularJS implementation
                             $compile(errorTemplate)(scope);
                             validMeTask.element.parent().append(errorTemplate);
                         }
-                        scope.$apply();
                     } else {
                         validMeTask.element.toggleClass('error-border', false);
                         validMeTask.element.parent().find(".errorLabel").remove();
