@@ -7,7 +7,7 @@ This repository contains samples of my code
 
 Sample Code of an angularJS implementation
 
---Credentials Page--
+--Some Page--
 ==========
 
 	 <div class="credentials-page wrapper-content" ng-controller="CredentialsController">
