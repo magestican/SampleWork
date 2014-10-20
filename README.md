@@ -10,13 +10,13 @@ Sample Code of an angularJS implementation
 --Credentials Page--
 ==========
 
- <div class="credentials-page wrapper-content" ng-controller="CredentialsController">
-    <h2 class="page-subheader">3. CREDENTIALS</h2>
-    <p>
+	 <div class="credentials-page wrapper-content" ng-controller="CredentialsController">
+    	<h2 class="page-subheader">3. CREDENTIALS</h2>
+    	<p>
         Please provide license numbers and expiration dates for the required licenses below. If your licenses do not show two years of experience,
         please also upload documents providing proof of two years of experience such as financial statement or letters of reference for similar work
         experience.
-    </p>
+	 </p>
 
     <!--1-->
     <div ng-show="model2.companytype == 'Contractor' && model2.program.acqc">
