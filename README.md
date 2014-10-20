@@ -18,7 +18,6 @@ Sample Code of an angularJS implementation
         experience.
     </p>
 
-
     <!--1-->
     <div ng-show="model2.companytype == 'Contractor' && model2.program.acqc">
 
@@ -172,12 +171,8 @@ angular.module('Directives')
                 restrict: 'E',
                 scope: true,
                 link: function (scope, element, attrs, controllers) {
-
                     scope.model = $rootScope.global.currentControllerModel;
-
-
                     var render = function () {
-
                         //beginning tag
                         var template = '<div  ' + (attrs.showcondition != undefined ? "ng-show = \"" + attrs.showcondition + "  \"" : "") + ' ' + (attrs.height != undefined ? "style=\"height: " + attrs.height + "\" " : "") + '  class="pdll form-horizontal">';
                         if (attrs.subtitle != undefined) {
@@ -284,8 +279,6 @@ angular.module('Directives')
                     } else {
                         console.log("The specified textbox doesnt have the modelbind attribute");
                     }
-
-
                 }
             };
         }]);
@@ -301,12 +294,8 @@ angular.module('Directives')
                 restrict: 'E',
                 scope: true,
                 link: function (scope, element, attrs, controllers) {
-
                     scope.model = $rootScope.global.currentControllerModel;
-
-
                     scope.setFileEventListener = function ($files) {
-
                         var reader = new FileReader();
                         scope.uploadedFile = $files[0];
                         reader.readAsDataURL(scope.uploadedFile);
@@ -372,7 +361,6 @@ angular.module('Directives')
                             throw RegExp('Invalid file with no extension was submited');
                         }
                     }
-
 
                     var render = function () {
                         scope.alignToRight = (attrs.titletext == undefined || attrs.titletext == "")
@@ -442,8 +430,6 @@ angular.module('Directives')
 
                     var result = { message: "", element: {}, good: true }
                     if (attrs.validmefor != undefined && attrs.validmefor != "") {
-
-
                         var value = element.val();
                         var ruleArray = attrs.validmefor.replace(" ", "").split("@");
                         var validRules = { type: "", rule: "" };
