@@ -10,7 +10,7 @@ Sample Code of an angularJS implementation
 --Credentials Page--
 ==========
 
-<div class="credentials-page wrapper-content" ng-controller="CredentialsController">
+ <div class="credentials-page wrapper-content" ng-controller="CredentialsController">
     <h2 class="page-subheader">3. CREDENTIALS</h2>
     <p>
         Please provide license numbers and expiration dates for the required licenses below. If your licenses do not show two years of experience,
@@ -165,8 +165,8 @@ Sample Code of an angularJS implementation
 --Directives Used--
 ==========
 
-angular.module('Directives')
-        .directive('textBox', ['$filter', '$rootScope', 'fileUploader', '$compile', 'Helper', function ($filter, $rootScope, fileUploader, $compile, Helper) {
+	angular.module('Directives')
+        .directive('textBox', ['$filter', '$rootScope', 'fileUploader', '$compile', 'Helper', function ($filter, $rootScope, 		fileUploader, $compile, Helper) {
             return {
                 restrict: 'E',
                 scope: true,
@@ -288,8 +288,8 @@ angular.module('Directives')
 ==========
 
 
-angular.module('Directives')
-        .directive('uploadButton', ['$filter', '$rootScope', '$upload', 'fileUploader', '$compile', 'Helper', function ($filter, $rootScope, $upload, fileUploader, $compile, Helper) {
+	angular.module('Directives')
+        .directive('uploadButton', ['$filter', '$rootScope', '$upload', 'fileUploader', '$compile', 'Helper', function 			($filter, $rootScope, $upload, fileUploader, $compile, Helper) {
             return {
                 restrict: 'E',
                 scope: true,
@@ -397,8 +397,8 @@ angular.module('Directives')
 ==========
 
 
-angular.module('Directives')
-    .directive('validme', ['$filter', '$compile', '$document', function ($filter, $compile, $document) {
+	angular.module('Directives')
+	 .directive('validme', ['$filter', '$compile', '$document', function ($filter, $compile, $document) {
         return {
             restrict: 'A',
             transclude: false,
